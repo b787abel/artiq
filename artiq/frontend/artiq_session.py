@@ -31,6 +31,7 @@ def main():
     master_cmd    = [sys.executable, "-u", "-m", "artiq.frontend.artiq_master"]
     dashboard_cmd = [sys.executable,       "-m", "artiq.frontend.artiq_dashboard"]
     ctlmgr_cmd    = [sys.executable,       "-m", "artiq_comtools.artiq_ctlmgr"]
+    spyder_cmd = ['spyder',]
     master_cmd    += args.m
     dashboard_cmd += args.d
     ctlmgr_cmd    += args.c
@@ -49,6 +50,8 @@ def main():
                 with subprocess.Popen(ctlmgr_cmd):
                     for line in iter(master.stdout.readline, ""):
                         sys.stdout.write(line)
+                    with subprocess.Popen(spyder_cmd): 
+                        print('spyder')
         else:
             print("session: master failed to start, exiting.")
 
