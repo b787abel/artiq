@@ -40,6 +40,7 @@ class RIDCounter:
     def _update_cache(self, rid):
         contents = str(rid) + "\n"
         directory = os.path.abspath(os.path.dirname(self.cache_filename))
+        print('RID counter directory', directory)
         with tempfile.NamedTemporaryFile("w", dir=directory, delete=False
                                          ) as f:
             f.write(contents)

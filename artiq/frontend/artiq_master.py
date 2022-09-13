@@ -85,7 +85,8 @@ def main():
     signal_handler.setup()
     atexit.register(signal_handler.teardown)
     bind = common_args.bind_address_from_args(args)
-    print('daqpath', args.daq_dir)
+    if args.daq_dir is None: 
+        print('Warning, no DAQ path is provided, results are saved locally')
 
     server_broadcast = Broadcaster()
     loop.run_until_complete(server_broadcast.start(

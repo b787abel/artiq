@@ -16,7 +16,7 @@ def get_argparser():
     parser.add_argument("--version", action="version",
                         version="ARTIQ v{}".format(artiq_version),
                         help="print the ARTIQ version number")
-    parser.add_argument("-m", action="append", default=["--daq_dir", 'test_daq_dir'],
+    parser.add_argument("-m", action="append", default=["--daq_dir", '/run/user/1001/gvfs/smb-share:server=aldaq2.physics.ox.ac.uk,share=aldaq2/FootGroup2/-173Genesis'],
                         help="add argument to the master command line")
     parser.add_argument("-d", action="append", default=[],
                         help="add argument to the dashboard command line")
