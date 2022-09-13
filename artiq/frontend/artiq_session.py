@@ -50,6 +50,7 @@ def main():
                 with subprocess.Popen(ctlmgr_cmd):
                     for line in iter(master.stdout.readline, ""):
                         sys.stdout.write(line)
+                    print('trying to open spyder')
                     with subprocess.Popen(spyder_cmd): 
                         print('spyder')
         else:
