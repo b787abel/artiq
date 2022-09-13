@@ -13,7 +13,7 @@ __pycache__/
 /build
 /dist
 /*.egg-info
-/*artiq.egg-info
+artiq/artiq.egg-info/
 /.coverage
 /artiq/test/lit/*/Output/
 /artiq/binaries

@@ -40,9 +40,9 @@ class _RepoScanner:
                 while name in entry_dict:
                     name = basename + str(i)
                     i += 1
-                logger.warning("Duplicate experiment name: '%s'\n"
-                               "Renaming class '%s' in '%s' to '%s'",
-                               basename, class_name, filename, name)
+                #logger.warning("Duplicate experiment name: '%s'\n"
+                #               "Renaming class '%s' in '%s' to '%s'",
+                #               basename, class_name, filename, name)
             entry = {
                 "file": filename,
                 "class_name": class_name,

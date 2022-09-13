@@ -52,6 +52,7 @@ setup(
     description="Advanced Real-Time Infrastructure for Quantum physics",
     long_description=open("README.rst", encoding="utf-8").read(),
     license="LGPLv3+",
+    #package_dir={'': 'artiq/'}, 
     classifiers="""\
 Development Status :: 5 - Production/Stable
 Environment :: Console
@@ -66,7 +67,7 @@ Topic :: System :: Hardware
 """.splitlines(),
     install_requires=requirements,
     extras_require={},
-    packages=find_packages(),
+    packages=['artiq/'],
     namespace_packages=[],
     include_package_data=True,
     ext_modules=[],
