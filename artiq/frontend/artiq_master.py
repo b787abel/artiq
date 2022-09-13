@@ -123,8 +123,9 @@ def main():
     experiment_db = ExperimentDB(
         repo_backend, worker_handlers, args.experiment_subdir)
     atexit.register(experiment_db.close)
-    
+    print(daq_dir)
     cache_filename = os.path.join(daq_dir, "last_rid.pyon")
+    print(cache_filename)
     results_dir = os.path.join(daq_dir, 'results')
     scheduler = Scheduler(RIDCounter(cache_filename, results_dir), worker_handlers, experiment_db, args.log_submissions)
     scheduler.start()
