@@ -45,6 +45,7 @@ def main():
             if line.rstrip() == "ARTIQ master is now ready.":
                 master_ready = True
                 break
+        print('master is really ready')
         if master_ready:
             with subprocess.Popen(dashboard_cmd):
                 with subprocess.Popen(ctlmgr_cmd):
