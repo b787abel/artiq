@@ -286,7 +286,7 @@ def main():
     repository_path = None
 
     def write_results():
-        cwd = os.get_cwd()
+        cwd = os.getcwd()
         print(cwd)
         #file = r'/home/bentinel/bec2_control/control/daq_path.pyon'
         #print(file)
