@@ -67,7 +67,7 @@ Topic :: System :: Hardware
 """.splitlines(),
     install_requires=requirements,
     extras_require={},
-    packages=find_packages(),
+    packages=['artiq/'],
     namespace_packages=[],
     include_package_data=True,
     ext_modules=[],
