@@ -18,7 +18,9 @@ class RIDCounter:
         self.results_dir = results_dir
         self._next_rid = self._last_rid() + 1
         logger.debug("Next RID is %d", self._next_rid)
-
+        print('cache_filename', cache_filename)
+        print('results_dir', results_dir)
+        
     def get(self):
         rid = self._next_rid
         self._next_rid += 1
@@ -40,7 +42,6 @@ class RIDCounter:
     def _update_cache(self, rid):
         contents = str(rid) + "\n"
         directory = os.path.abspath(os.path.dirname(self.cache_filename))
-        print('RID counter directory', directory)
         with tempfile.NamedTemporaryFile("w", dir=directory, delete=False
                                          ) as f:
             f.write(contents)
