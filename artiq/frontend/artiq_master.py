@@ -90,7 +90,7 @@ def main():
         print('Warning, no DAQ path is provided, daq_path.pyon is used')
         file = '/home/bentinel/bec2_control/control/daq_path.pyon'
         with open(file, 'r') as f: 
-            daq_dir = f.readline()
+            daq_dir = f.readline().strip()
         print('Using ', daq_dir)
     else: 
         daq_dir = args.daq_dir
