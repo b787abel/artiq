@@ -288,6 +288,7 @@ def main():
     def write_results():
         
         file = r'/home/bentinel/bec2_control/control/daq_path.pyon'
+        print(file)
         with open(file, 'r') as f: 
             daq_dir = f.readline()
         filename = "{:09}-{}.h5".format(rid, exp.__name__)
