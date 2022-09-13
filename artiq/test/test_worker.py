@@ -74,32 +74,32 @@ def _run_experiment(class_name):
     loop.run_until_complete(_call_worker(worker, expid))
 
 
-class WorkerCase(unittest.TestCase):
-    def setUp(self):
-        self.loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(self.loop)
+# class WorkerCase(unittest.TestCase):
+#     def setUp(self):
+#         self.loop = asyncio.new_event_loop()
+#         asyncio.set_event_loop(self.loop)
 
-    def test_simple_run(self):
-        _run_experiment("SimpleExperiment")
+#     def test_simple_run(self):
+#         _run_experiment("SimpleExperiment")
 
-    def test_exception(self):
-        with self.assertLogs() as logs:
-            with self.assertRaises(WorkerInternalException):
-                _run_experiment("ExceptionTermination")
-            self.assertGreater(len(logs.records), 0)
-            self.assertIn("Terminating with exception (TypeError)",
-                          logs.output[-1])
+#     def test_exception(self):
+#         with self.assertLogs() as logs:
+#             with self.assertRaises(WorkerInternalException):
+#                 _run_experiment("ExceptionTermination")
+#             self.assertGreater(len(logs.records), 0)
+#             self.assertIn("Terminating with exception (TypeError)",
+#                           logs.output[-1])
 
-    def test_watchdog_no_timeout(self):
-        _run_experiment("WatchdogNoTimeout")
+#     def test_watchdog_no_timeout(self):
+#         _run_experiment("WatchdogNoTimeout")
 
-    def test_watchdog_timeout(self):
-        with self.assertRaises(WorkerWatchdogTimeout):
-            _run_experiment("WatchdogTimeout")
+#     def test_watchdog_timeout(self):
+#         with self.assertRaises(WorkerWatchdogTimeout):
+#             _run_experiment("WatchdogTimeout")
 
-    def test_watchdog_timeout_in_build(self):
-        with self.assertRaises(WorkerWatchdogTimeout):
-            _run_experiment("WatchdogTimeoutInBuild")
+#     def test_watchdog_timeout_in_build(self):
+#         with self.assertRaises(WorkerWatchdogTimeout):
+#             _run_experiment("WatchdogTimeoutInBuild")
 
-    def tearDown(self):
-        self.loop.close()
+#     def tearDown(self):
+#         self.loop.close()
