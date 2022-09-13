@@ -124,8 +124,8 @@ def main():
         repo_backend, worker_handlers, args.experiment_subdir)
     atexit.register(experiment_db.close)
     
-    cache_filename = os.path.join(args.daq_dir, "last_rid.pyon")
-    results_dir = os.path.join(args.daq_dir, 'results')
+    cache_filename = os.path.join(daq_dir, "last_rid.pyon")
+    results_dir = os.path.join(daq_dir, 'results')
     scheduler = Scheduler(RIDCounter(cache_filename, results_dir), worker_handlers, experiment_db, args.log_submissions)
     scheduler.start()
     atexit_register_coroutine(scheduler.stop)
