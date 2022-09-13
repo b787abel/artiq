@@ -47,13 +47,13 @@ def main():
                 break
         print('master is really ready')
         if master_ready:
-            with subprocess.Popen(dashboard_cmd):
-                with subprocess.Popen(ctlmgr_cmd):
-                    for line in iter(master.stdout.readline, ""):
-                        sys.stdout.write(line)
-                    print('trying to open spyder')
-                    with subprocess.Popen(spyder_cmd): 
-                        print('spyder')
+            print('trying to open spyder')
+            with subprocess.Popen(spyder_cmd): 
+                with subprocess.Popen(dashboard_cmd):
+                    with subprocess.Popen(ctlmgr_cmd):
+                        for line in iter(master.stdout.readline, ""):
+                            sys.stdout.write(line)
+
         else:
             print("session: master failed to start, exiting.")
 
