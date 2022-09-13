@@ -16,7 +16,7 @@ def get_argparser():
     parser.add_argument("--version", action="version",
                         version="ARTIQ v{}".format(artiq_version),
                         help="print the ARTIQ version number")
-    parser.add_argument("-m", action="append", default=[],
+    parser.add_argument("-m", action="append", default=["--daq_dir", 'test_daq_dir'],
                         help="add argument to the master command line")
     parser.add_argument("-d", action="append", default=[],
                         help="add argument to the dashboard command line")

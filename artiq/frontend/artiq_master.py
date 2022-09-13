@@ -61,6 +61,9 @@ def get_argparser():
     parser.add_argument("--log-submissions", default=None, 
         help="set the filename to create the experiment subimission")
 
+    parser.add_argument("--daq_dir", default=None, help="directory to remote DAQ,"
+                        "contains results folder, last_rid.pyon and dataset_db.pyon")
+
     return parser
 
 
@@ -82,6 +85,7 @@ def main():
     signal_handler.setup()
     atexit.register(signal_handler.teardown)
     bind = common_args.bind_address_from_args(args)
+    print('daqpath', args.daq_dir)
 
     server_broadcast = Broadcaster()
     loop.run_until_complete(server_broadcast.start(
