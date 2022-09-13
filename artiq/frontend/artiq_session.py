@@ -16,7 +16,7 @@ def get_argparser():
     parser.add_argument("--version", action="version",
                         version="ARTIQ v{}".format(artiq_version),
                         help="print the ARTIQ version number")
-    parser.add_argument("-m", action="append", default=["--daq_dir", '/run/user/1001/gvfs/smb-share:server=aldaq2.physics.ox.ac.uk,share=aldaq2/FootGroup2/-173Genesis'],
+    parser.add_argument("-m", action="append", default=[],
                         help="add argument to the master command line")
     parser.add_argument("-d", action="append", default=[],
                         help="add argument to the dashboard command line")
@@ -31,15 +31,10 @@ def main():
     master_cmd    = [sys.executable, "-u", "-m", "artiq.frontend.artiq_master"]
     dashboard_cmd = [sys.executable,       "-m", "artiq.frontend.artiq_dashboard"]
     ctlmgr_cmd    = [sys.executable,       "-m", "artiq_comtools.artiq_ctlmgr"]
-    spyder_cmd = ['spyder']
     master_cmd    += args.m
     dashboard_cmd += args.d
     ctlmgr_cmd    += args.c
     
-    print('opening spyder')
-    with subprocess.Popen(spyder_cmd): 
-        print('spyder opened ')
-        
     with subprocess.Popen(master_cmd,
                           stdout=subprocess.PIPE, universal_newlines=True,
                           bufsize=1) as master:

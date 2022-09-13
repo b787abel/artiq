@@ -87,7 +87,13 @@ def main():
     atexit.register(signal_handler.teardown)
     bind = common_args.bind_address_from_args(args)
     if args.daq_dir is None: 
-        print('Warning, no DAQ path is provided, results are saved locally')
+        print('Warning, no DAQ path is provided, daq_path.pyon is used')
+        file = '/home/bentinel/bec2_control/control/daq_path.pyon'
+        with open(file, 'r') as f: 
+            daq_dir = f.readline()
+        print('Using ', daq_dir)
+    else: 
+        daq_dir = args.daq_dir
 
     server_broadcast = Broadcaster()
     loop.run_until_complete(server_broadcast.start(

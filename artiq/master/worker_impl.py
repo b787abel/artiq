@@ -286,7 +286,13 @@ def main():
     repository_path = None
 
     def write_results():
+        
+        file = '/home/bentinel/bec2_control/control/daq_path.pyon'
+        with open(file, 'r') as f: 
+            daq_dir = f.readline()
         filename = "{:09}-{}.h5".format(rid, exp.__name__)
+        filename = os.path.join(daq_dir, 'results', filename)
+        print('saving into', filename)
         with h5py.File(filename, "w") as f:
             dataset_mgr.write_hdf5(f)
             f["artiq_version"] = artiq_version

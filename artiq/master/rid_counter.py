@@ -18,8 +18,8 @@ class RIDCounter:
         self.results_dir = results_dir
         self._next_rid = self._last_rid() + 1
         logger.debug("Next RID is %d", self._next_rid)
-        print('cache_filename', cache_filename)
-        print('results_dir', results_dir)
+        #print('cache_filename', cache_filename)
+        #print('results_dir', results_dir)
         
     def get(self):
         rid = self._next_rid
