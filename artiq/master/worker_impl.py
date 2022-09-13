@@ -298,7 +298,7 @@ def main():
         if not os.path.exists(dirname): 
             os.makedirs(dirname)
         print('saving into', filename)
-        with h5py.File(filename, "w") as f:
+        with h5py.File(os.path.join(dirname, filename), "w") as f:
             dataset_mgr.write_hdf5(f)
             f["artiq_version"] = artiq_version
             f["rid"] = rid
