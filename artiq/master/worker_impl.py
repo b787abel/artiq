@@ -287,18 +287,14 @@ def main():
 
     def write_results():
         cwd = os.getcwd()
-        
-        print(cwd)
+
         file = r'/home/bentinel/bec2_control/control/daq_path.pyon'
         with open(file, 'r') as f: 
             daq_dir = f.readline().strip()
         filename = "{:09}-{}.h5".format(rid, exp.__name__)
         dirname = os.path.join(daq_dir, *cwd.split('/')[-3:])
-        print('dirname', dirname)
         if not os.path.exists(dirname): 
             os.makedirs(dirname)
-        print('saving into', filename)
-        print(os.path.join(dirname, filename))
         with h5py.File(os.path.join(dirname, filename), "w") as f:
             dataset_mgr.write_hdf5(f)
             f["artiq_version"] = artiq_version
