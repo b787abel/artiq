@@ -365,6 +365,7 @@ def main():
                 examine(ExamineDeviceMgr, ExamineDatasetMgr, obj["file"])
                 put_completed()
             elif action == "terminate":
+                print('terminating from fork')
                 break
     except:
         put_exception_report()
