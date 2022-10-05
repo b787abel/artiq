@@ -45,7 +45,7 @@ class DIO(_EEM):
     def add_std(cls, target, eem, ttl03_cls, ttl47_cls, iostandard=default_iostandard,
             edge_counter_cls=None):
         cls.add_extension(target, eem, iostandard=iostandard)
-
+        print('adding')
         phys = []
         dci = iostandard(eem).name == "LVDS"
         for i in range(4):
@@ -54,13 +54,14 @@ class DIO(_EEM):
             phys.append(phy)
             target.submodules += phy
             target.rtio_channels.append(rtio.Channel.from_phy(phy))
+            print('adding ch', i, 'currently have ', len(target.rtio_channels))
         for i in range(4):
             pads = target.platform.request("dio{}".format(eem), 4+i)
             phy = ttl47_cls(pads.p, pads.n, dci=dci)
             phys.append(phy)
             target.submodules += phy
             target.rtio_channels.append(rtio.Channel.from_phy(phy))
-
+            print('adding ch', i, 'currently have ', len(target.rtio_channels))
         if edge_counter_cls is not None:
             for phy in phys:
                 state = getattr(phy, "input_state", None)
