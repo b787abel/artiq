@@ -291,18 +291,38 @@ def main():
         file = r'/home/bentinel/bec2_control/control/daq_path.pyon'
         with open(file, 'r') as f: 
             daq_dir = f.readline().strip()
-        filename = "{:09}-{}.h5".format(rid, exp.__name__)
         dirname = os.path.join(daq_dir, *cwd.split('/')[-3:])
+            
+        local_file =  r'/home/bentinel/bec2_control/control/local_path.pyon'
+        with open(local_file, 'r') as f: 
+            local_dir = f.readline().strip()
+        local_dirname = os.path.join(local_dir, *cwd.split('/')[-3:])
+        
+        filename = "{:09}-{}.h5".format(rid, exp.__name__)
         if not os.path.exists(dirname): 
             os.makedirs(dirname)
-        with h5py.File(os.path.join(dirname, filename), "w") as f:
-            dataset_mgr.write_hdf5(f)
-            f["artiq_version"] = artiq_version
-            f["rid"] = rid
-            f["start_time"] = start_time
-            f["run_time"] = run_time
-            f["expid"] = pyon.encode(expid)
-
+            
+        if not os.path.exists(local_dirname): 
+            os.makedirs(local_dirname)
+        
+        try: 
+            with h5py.File(os.path.join(dirname, filename), "w") as f:
+                dataset_mgr.write_hdf5(f)
+                f["artiq_version"] = artiq_version
+                f["rid"] = rid
+                f["start_time"] = start_time
+                f["run_time"] = run_time
+                f["expid"] = pyon.encode(expid)
+        except: 
+            print('Cannot save to DAQ, using local storage')
+            with h5py.File(os.path.join(local_dirname, filename), "w") as f:
+                dataset_mgr.write_hdf5(f)
+                f["artiq_version"] = artiq_version
+                f["rid"] = rid
+                f["start_time"] = start_time
+                f["run_time"] = run_time
+                f["expid"] = pyon.encode(expid)
+                
     device_mgr = DeviceManager(ParentDeviceDB,
                                virtual_devices={"scheduler": Scheduler(),
                                                 "ccb": CCB()})
