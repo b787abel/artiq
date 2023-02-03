@@ -300,7 +300,10 @@ def main():
         
         filename = "{:09}-{}.h5".format(rid, exp.__name__)
         if not os.path.exists(dirname): 
-            os.makedirs(dirname)
+            try: 
+                os.makedirs(dirname)
+            except: 
+                pass 
             
         if not os.path.exists(local_dirname): 
             os.makedirs(local_dirname)
