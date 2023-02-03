@@ -434,7 +434,7 @@ const SI5324_SETTINGS: si5324::FrequencySettings
     n31    : 75,
     n32    : 75,
     bwsel  : 4,
-    crystal_ref: true
+    crystal_as_ckin2: true
 };
 
 #[cfg(all(has_si5324, rtio_frequency = "125.0"))]
@@ -447,7 +447,7 @@ const SI5324_SETTINGS: si5324::FrequencySettings
     n31    : 63,
     n32    : 63,
     bwsel  : 4,
-    crystal_ref: true
+    crystal_as_ckin2: true
 };
 
 #[cfg(all(has_si5324, rtio_frequency = "100.0"))]
@@ -460,7 +460,7 @@ const SI5324_SETTINGS: si5324::FrequencySettings
     n31    : 50,
     n32    : 50,
     bwsel  : 4,
-    crystal_ref: true
+    crystal_as_ckin2: true
 };
 
 #[no_mangle]
@@ -486,8 +486,8 @@ pub extern fn main() -> i32 {
     let (mut io_expander0, mut io_expander1);
     #[cfg(all(soc_platform = "kasli", hw_rev = "v2.0"))]
     {
-        io_expander0 = board_misoc::io_expander::IoExpander::new(0);
-        io_expander1 = board_misoc::io_expander::IoExpander::new(1);
+        io_expander0 = board_misoc::io_expander::IoExpander::new(0).unwrap();
+        io_expander1 = board_misoc::io_expander::IoExpander::new(1).unwrap();
         io_expander0.init().expect("I2C I/O expander #0 initialization failed");
         io_expander1.init().expect("I2C I/O expander #1 initialization failed");
 
