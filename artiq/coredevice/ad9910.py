@@ -427,6 +427,8 @@ class AD9910:
                  asf_profile_enable: TInt32 = 1, 
                  drg_enable: TInt32 = 0, 
                  drg_dest: TInt32 = 0b00, 
+                 drg_ndwl_h: TInt32  = 0,
+                 drg_ndwl_l: TInt32  = 0,
                  effective_ftw: TInt32 = 1,
                  sync_validation_disable: TInt32 = 0, 
                  matched_latency_enable: TInt32 = 0):
@@ -449,6 +451,8 @@ class AD9910:
                      (asf_profile_enable << 24) |
                      (drg_dest << 20) |
                      (drg_enable << 19) |
+                     (drg_ndwl_h << 18) |
+                     (drg_ndwl_l << 17) |
                      (effective_ftw << 16) |
                      (matched_latency_enable << 7) |
                      (sync_validation_disable << 5))
