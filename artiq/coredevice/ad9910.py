@@ -447,8 +447,8 @@ class AD9910:
         """
         self.write32(_AD9910_REG_CFR2,
                      (asf_profile_enable << 24) |
-                     (drg_enable << 19) |
                      (drg_dest << 20) |
+                     (drg_enable << 19) |
                      (effective_ftw << 16) |
                      (matched_latency_enable << 7) |
                      (sync_validation_disable << 5))
