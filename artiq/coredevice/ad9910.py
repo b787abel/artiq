@@ -426,6 +426,7 @@ class AD9910:
     def set_cfr2(self, 
                  asf_profile_enable: TInt32 = 1, 
                  drg_enable: TInt32 = 0, 
+                 drg_dest: TInt32 = 0b00, 
                  effective_ftw: TInt32 = 1,
                  sync_validation_disable: TInt32 = 0, 
                  matched_latency_enable: TInt32 = 0):
@@ -447,6 +448,7 @@ class AD9910:
         self.write32(_AD9910_REG_CFR2,
                      (asf_profile_enable << 24) |
                      (drg_enable << 19) |
+                     (drg_dest << 18) |
                      (effective_ftw << 16) |
                      (matched_latency_enable << 7) |
                      (sync_validation_disable << 5))
