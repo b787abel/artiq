@@ -17,7 +17,6 @@ from ..language import core as language_core
 from . import types, builtins, asttyped, math_fns, prelude
 from .transforms import ASTTypedRewriter, Inferencer, IntMonomorphizer, TypedtreePrinter
 from .transforms.asttyped_rewriter import LocalExtractor
-import traceback
 
 
 class SpecializedFunction:
