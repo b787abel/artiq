@@ -228,9 +228,9 @@ class CPLD:
 
         :return: The status register value.
         """
-        self.bus.set_config_mu(SPI_CONFIG | spi.SPI_END | spi.SPI_INPUT, 24,
+        self.bus.set_config_mu(SPI_CONFIG | spi.SPI_END | spi.SPI_INPUT, 28,
                                SPIT_CFG_RD, CS_CFG)
-        self.bus.write(self.cfg_reg << 8)
+        self.bus.write(self.cfg_reg << 4)
         return self.bus.read()
 
     @kernel
