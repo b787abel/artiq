@@ -945,7 +945,7 @@ class AD9910:
 
     @kernel
     def cfg_drctl(self, state: TBool):
-        self.cpld.cfg_drctl(self.chip_select - 8, state)
+        self.cpld.cfg_drctl(self.chip_select, state)
 
     @kernel
     def set_sync(self, 
