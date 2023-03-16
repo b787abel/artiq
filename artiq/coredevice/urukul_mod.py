@@ -282,7 +282,7 @@ class CPLD_mod:
 
 
     @kernel
-    def cfg_sw(self, channel: TInt32, on: TBool):
+    def cfg_drctl(self, channel: TInt32, on: TBool):
 
         c = self.cfg_reg
         if on:
