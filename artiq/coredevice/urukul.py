@@ -22,16 +22,17 @@ SPIT_DDS_RD = 16
 
 # CFG configuration register bit offsets
 CFG_RF_SW = 0
-CFG_LED = 4
-CFG_PROFILE = 8
-CFG_IO_UPDATE = 12
-CFG_MASK_NU = 13
-CFG_CLK_SEL0 = 17
-CFG_CLK_SEL1 = 21
-CFG_SYNC_SEL = 18
-CFG_RST = 19
-CFG_IO_RST = 20
-CFG_CLK_DIV = 22
+CFG_DRCTL = 4
+CFG_LED = 8
+CFG_PROFILE = 12
+CFG_IO_UPDATE = 16
+CFG_MASK_NU = 17
+CFG_CLK_SEL0 = 21
+CFG_CLK_SEL1 = 25
+CFG_SYNC_SEL = 22
+CFG_RST = 23
+CFG_IO_RST = 24
+CFG_CLK_DIV = 26
 
 # STA status register bit offsets
 STA_RF_SW = 0
@@ -57,10 +58,11 @@ DEFAULT_PROFILE = 7
 
 
 @portable
-def urukul_cfg(rf_sw, led, profile, io_update, mask_nu,
+def urukul_cfg(rf_sw, drctl, led, profile, io_update, mask_nu,
                clk_sel, sync_sel, rst, io_rst, clk_div):
     """Build Urukul CPLD configuration register"""
     return ((rf_sw << CFG_RF_SW) |
+            (drctl << CFG_DRCTL) |
             (led << CFG_LED) |
             (profile << CFG_PROFILE) |
             (io_update << CFG_IO_UPDATE) |
@@ -207,9 +209,9 @@ class CPLD:
         :param cfg: 24 bit data to be written. Will be stored at
             :attr:`cfg_reg`.
         """
-        self.bus.set_config_mu(SPI_CONFIG | spi.SPI_END, 24,
+        self.bus.set_config_mu(SPI_CONFIG | spi.SPI_END, 28,
                                SPIT_CFG_WR, CS_CFG)
-        self.bus.write(cfg << 8)
+        self.bus.write(cfg << 4)
         self.cfg_reg = cfg
 
     @kernel
