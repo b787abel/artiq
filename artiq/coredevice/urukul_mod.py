@@ -280,6 +280,18 @@ class CPLD_mod:
             c &= ~(1 << channel)
         self.cfg_write(c)
 
+
+    @kernel
+    def cfg_sw(self, channel: TInt32, on: TBool):
+
+        c = self.cfg_reg
+        if on:
+            c |= 1 << channel
+        else:
+            c &= ~(1 << channel)
+        self.cfg_write(c)
+
+
     @kernel
     def cfg_switches(self, state: TInt32):
         """Configure all four RF switches through the configuration register.

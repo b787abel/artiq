@@ -944,6 +944,10 @@ class AD9910:
         self.cpld.cfg_sw(self.chip_select - 4, state)
 
     @kernel
+    def cfg_drctl(self, state: TBool):
+        self.cpld.cfg_drctl(self.chip_select - 8, state)
+
+    @kernel
     def set_sync(self, 
                  in_delay: TInt32, 
                  window: TInt32, 

@@ -189,6 +189,10 @@ class ExamineDatasetMgr:
     @staticmethod
     def update(self, mod):
         pass
+    
+    @staticmethod
+    def set(): 
+        pass
 
 
 def examine(device_mgr, dataset_mgr, file):
