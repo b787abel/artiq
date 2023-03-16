@@ -17,6 +17,7 @@ from ..language import core as language_core
 from . import types, builtins, asttyped, math_fns, prelude
 from .transforms import ASTTypedRewriter, Inferencer, IntMonomorphizer, TypedtreePrinter
 from .transforms.asttyped_rewriter import LocalExtractor
+import traceback
 
 
 class SpecializedFunction:
@@ -707,6 +708,7 @@ class StitchingInferencer(Inferencer):
                     # print("attr_value_type", attr_value_type)
                     attributes[attr_name].unify(attr_value_type)
                 except types.UnificationError as e:
+                    traceback.print_exc(e)
                     printer = types.TypePrinter()
                     diag = diagnostic.Diagnostic("error",
                         "host object has an attribute '{attr}' of type {typea}, which is"
