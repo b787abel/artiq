@@ -20,18 +20,6 @@ SPIT_ATT_RD = 16
 SPIT_DDS_WR = 2
 SPIT_DDS_RD = 16
 
-# CFG configuration register bit offsets
-CFG_RF_SW = 0
-CFG_LED = 4
-CFG_PROFILE = 8
-CFG_IO_UPDATE = 12
-CFG_MASK_NU = 13
-CFG_CLK_SEL0 = 17
-CFG_CLK_SEL1 = 21
-CFG_SYNC_SEL = 18
-CFG_RST = 19
-CFG_IO_RST = 20
-CFG_CLK_DIV = 22
 
 # CFG configuration register bit offsets for modified CPLD gateware urukuls 
 CFG_RF_SW_MOD = 0
@@ -70,23 +58,7 @@ CS_DDS_CH3 = 7
 DEFAULT_PROFILE = 7
 
 @portable
-def urukul_cfg(rf_sw, led, profile, io_update, mask_nu,
-               clk_sel, sync_sel, rst, io_rst, clk_div):
-    """Build Urukul CPLD configuration register"""
-    return ((rf_sw << CFG_RF_SW) |
-            (led << CFG_LED) |
-            (profile << CFG_PROFILE) |
-            (io_update << CFG_IO_UPDATE) |
-            (mask_nu << CFG_MASK_NU) |
-            ((clk_sel & 0x01) << CFG_CLK_SEL0) |
-            ((clk_sel & 0x02) << (CFG_CLK_SEL1 - 1)) |
-            (sync_sel << CFG_SYNC_SEL) |
-            (rst << CFG_RST) |
-            (io_rst << CFG_IO_RST) |
-            (clk_div << CFG_CLK_DIV))
-
-@portable
-def urukul_cfg_mod(rf_sw, drctl, led, profile, io_update, mask_nu,
+def urukul_cfg(rf_sw, drctl, led, profile, io_update, mask_nu,
                clk_sel, sync_sel, rst, io_rst, clk_div):
     """Build Urukul CPLD configuration register"""
     return ((rf_sw << CFG_RF_SW_MOD) |
@@ -140,7 +112,7 @@ class _RegIOUpdate:
     @kernel
     def pulse(self, t: TFloat):
         cfg = self.cpld.cfg_reg
-        self.cpld.cfg_write(cfg | (1 << CFG_IO_UPDATE))
+        self.cpld.cfg_write(cfg | (1 << CFG_IO_UPDATE_MOD))
         delay(t)
         self.cpld.cfg_write(cfg)
 
@@ -220,7 +192,7 @@ class CPLD_mod:
             assert sync_div is None
             sync_div = 0
 
-        self.cfg_reg = urukul_cfg_mod(rf_sw=rf_sw, drctl=0b0000, led=0, profile=DEFAULT_PROFILE,
+        self.cfg_reg = urukul_cfg(rf_sw=rf_sw, drctl=0b0000, led=0, profile=DEFAULT_PROFILE,
                                   io_update=0, mask_nu=0, clk_sel=clk_sel,
                                   sync_sel=sync_sel,
                                   rst=0, io_rst=0, clk_div=clk_div)
@@ -272,7 +244,7 @@ class CPLD_mod:
         """
         cfg = self.cfg_reg
         # Don't pulse MASTER_RESET (m-labs/artiq#940)
-        self.cfg_reg = cfg | (0 << CFG_RST) | (1 << CFG_IO_RST)
+        self.cfg_reg = cfg | (0 << CFG_RST_MOD) | (1 << CFG_IO_RST_MOD)
         if blind:
             self.cfg_write(self.cfg_reg)
         else:
@@ -289,8 +261,8 @@ class CPLD_mod:
     @kernel
     def io_rst(self):
         """Pulse IO_RST"""
-        self.cfg_write(self.cfg_reg | (1 << CFG_IO_RST))
-        self.cfg_write(self.cfg_reg & ~(1 << CFG_IO_RST))
+        self.cfg_write(self.cfg_reg | (1 << CFG_IO_RST_MOD))
+        self.cfg_write(self.cfg_reg & ~(1 << CFG_IO_RST_MOD))
 
     @kernel
     def cfg_sw(self, channel: TInt32, on: TBool):
@@ -455,6 +427,6 @@ class CPLD_mod:
 
         :param profile: PROFILE pins in numeric representation (0-7).
         """
-        cfg = self.cfg_reg & ~(7 << CFG_PROFILE)
-        cfg |= (profile & 7) << CFG_PROFILE
+        cfg = self.cfg_reg & ~(7 << CFG_PROFILE_MOD)
+        cfg |= (profile & 7) << CFG_PROFILE_MOD
         self.cfg_write(cfg)
