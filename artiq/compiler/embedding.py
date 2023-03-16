@@ -707,7 +707,6 @@ class StitchingInferencer(Inferencer):
                     # print("attr_value_type", attr_value_type)
                     attributes[attr_name].unify(attr_value_type)
                 except types.UnificationError as e:
-                    traceback.print_exc(e)
                     printer = types.TypePrinter()
                     diag = diagnostic.Diagnostic("error",
                         "host object has an attribute '{attr}' of type {typea}, which is"
