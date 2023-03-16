@@ -10,8 +10,8 @@ from artiq.coredevice import urukul_mod
 from artiq.coredevice.urukul_mod import DEFAULT_PROFILE
 
 # Work around ARTIQ-Python import machinery
-urukul_mod_sta_pll_lock = urukul_mod.urukul_mod_sta_pll_lock
-urukul_mod_sta_smp_err = urukul_mod.urukul_mod_sta_smp_err
+urukul_mod_sta_pll_lock = urukul_mod.urukul_sta_pll_lock
+urukul_mod_sta_smp_err = urukul_mod.urukul_sta_smp_err
 
 __all__ = [
     "AD9910",
