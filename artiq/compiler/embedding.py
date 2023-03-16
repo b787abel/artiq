@@ -701,10 +701,10 @@ class StitchingInferencer(Inferencer):
             else:
                 # Does this conflict with an earlier guess?
                 try:
-                    print("id(object_value) ", id(object_value))
-                    print("attr_name ", attr_name)
-                    print("attributes[attr_name]", attributes[attr_name])
-                    print("attr_value_type", attr_value_type)
+                    # print("id(object_value) ", id(object_value))
+                    # print("attr_name ", attr_name)
+                    # print("attributes[attr_name]", attributes[attr_name])
+                    # print("attr_value_type", attr_value_type)
                     attributes[attr_name].unify(attr_value_type)
                 except types.UnificationError as e:
                     printer = types.TypePrinter()
