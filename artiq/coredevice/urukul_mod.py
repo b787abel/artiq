@@ -252,16 +252,10 @@ class CPLD_mod:
             self.cfg_write(self.cfg_reg)
         else:
             proto_rev = urukul_sta_proto_rev(self.sta_read())
-            delay(10*ms)
-            self.sta_read()
-            delay(10*ms)
             if proto_rev != STA_PROTO_REV_MATCH:
                 raise ValueError("Urukul proto_rev mismatch")
         delay(100 * us)  # reset, slack
         self.cfg_write(cfg)
-        delay(10*ms)
-        self.sta_read()
-        delay(10*ms)
         if self.sync_div:
             at_mu(now_mu() & ~0xf)  # align to RTIO/2
             self.set_sync_div(self.sync_div)  # 125 MHz/2 = 1 GHz/16
