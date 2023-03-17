@@ -229,9 +229,6 @@ class CPLD_mod:
         """
         self.bus.set_config_mu(SPI_CONFIG | spi.SPI_END | spi.SPI_INPUT, 28,
                                SPIT_CFG_RD, CS_CFG)
-        delay(10*ms)
-        print(self.cfg_reg << 4)
-        delay(10*ms)
         self.bus.write(self.cfg_reg << 4)
         return self.bus.read()
 
