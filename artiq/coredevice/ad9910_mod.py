@@ -383,6 +383,7 @@ class AD9910:
                  phase_autoclear: TInt32 = 0,
                  drg_load_lrr: TInt32 = 0,
                  drg_autoclear: TInt32 = 0,
+                 drg_clear: TInt32 = 0,
                  phase_clear: TInt32 = 0,
                  internal_profile: TInt32 = 0,
                  ram_destination: TInt32 = 0,
@@ -416,6 +417,7 @@ class AD9910:
                      (drg_load_lrr << 15) |
                      (drg_autoclear << 14) |
                      (phase_autoclear << 13) |
+                     (drg_clear << 12) |
                      (phase_clear << 11) |
                      (osk_enable << 9) |
                      (select_auto_osk << 8) |
