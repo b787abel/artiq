@@ -292,12 +292,12 @@ def main():
     def write_results():
         cwd = os.getcwd()
 
-        file = r'/home/bentinel/bec2_control/control/daq_path.pyon'
+        file = r'/home/labuser/bec2_control/control/daq_path.pyon'
         with open(file, 'r') as f: 
             daq_dir = f.readline().strip()
         dirname = os.path.join(daq_dir, *cwd.split('/')[-3:])
             
-        local_file =  r'/home/bentinel/bec2_control/control/local_path.pyon'
+        local_file =  r'/home/labuser/bec2_control/control/local_path.pyon'
         with open(local_file, 'r') as f: 
             local_dir = f.readline().strip()
         local_dirname = os.path.join(local_dir, *cwd.split('/')[-3:])
