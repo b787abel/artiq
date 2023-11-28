@@ -88,7 +88,7 @@ def main():
     bind = common_args.bind_address_from_args(args)
     if args.daq_dir is None: 
         print('Warning, no DAQ path is provided, daq_path.pyon is used')
-        file = '/home/bentinel/bec2_control/control/local_path.pyon'
+        file = '/home/labuser/bec2_control/control/local_path.pyon'
         with open(file, 'r') as f: 
             daq_dir = f.readline().strip()
         print('Using ', daq_dir)
