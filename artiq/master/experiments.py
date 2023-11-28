@@ -35,22 +35,16 @@ class _RepoScanner:
                                "name (%s)", name)
                 name = name.replace("/", "_")
             if name in entry_dict:
-                basename = name
-                i = 1
-                while name in entry_dict:
-                    name = basename + str(i)
-                    i += 1
-                logger.warning("Duplicate experiment name: '%s'\n"
-                               "Renaming class '%s' in '%s' to '%s'",
-                               basename, class_name, filename, name)
-            entry = {
-                "file": filename,
-                "class_name": class_name,
-                "arginfo": class_desc["arginfo"],
-                "argument_ui": class_desc["argument_ui"],
-                "scheduler_defaults": class_desc["scheduler_defaults"]
-            }
-            entry_dict[name] = entry
+                pass 
+            else: 
+                entry = {
+                    "file": filename,
+                    "class_name": class_name,
+                    "arginfo": class_desc["arginfo"],
+                    "argument_ui": class_desc["argument_ui"],
+                    "scheduler_defaults": class_desc["scheduler_defaults"]
+                        }
+                entry_dict[name] = entry
 
     async def _scan(self, root, subdir=""):
         entry_dict = dict()
