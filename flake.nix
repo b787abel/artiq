@@ -10,7 +10,7 @@
   inputs.artiq-comtools.inputs.nixpkgs.follows = "nixpkgs";
   inputs.artiq-comtools.inputs.sipyco.follows = "sipyco";
 
-  inputs.src-migen = { url = github:m-labs/migen; flake = false; };
+  inputs.src-migen = { url = "git+https://github.com/b787abel/migen"; flake = false; };
   inputs.src-misoc = { type = "git"; url = "https://github.com/m-labs/misoc.git"; submodules = true; flake = false; };
 
   outputs = { self, nixpkgs, mozilla-overlay, sipyco, src-pythonparser, artiq-comtools, src-migen, src-misoc }:
