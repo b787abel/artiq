@@ -226,7 +226,7 @@
       vivado = pkgs.buildFHSUserEnv {
         name = "vivado";
         targetPkgs = vivadoDeps;
-        profile = "set -e; source /tools/Xilinx/Vivado/2022.2/settings64.sh";
+        profile = "set -e; source /opt/Xilinx/Vivado/2022.2/settings64.sh";
         runScript = "vivado";
       };
 
