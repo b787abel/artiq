@@ -30,6 +30,16 @@
             "enum": ["standalone", "master", "satellite"],
             "description": "SoC base; value depends on intended system topology"
         },
+        "lane_count": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "SED lane count"
+        },
+        "fifo_depth": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "fifo depth"
+        },
         "ext_ref_frequency": {
             "type": "number",
             "exclusiveMinimum": 0,
