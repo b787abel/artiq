@@ -86,14 +86,14 @@ def main():
     signal_handler.setup()
     atexit.register(signal_handler.teardown)
     bind = common_args.bind_address_from_args(args)
-    if args.daq_dir is None: 
-        print('Warning, no DAQ path is provided, daq_path.pyon is used')
-        file = '/home/labuser/bec2_control/control/local_path.pyon'
-        with open(file, 'r') as f: 
-            daq_dir = f.readline().strip()
-        print('Using ', daq_dir)
-    else: 
-        daq_dir = args.daq_dir
+    #if args.daq_dir is None: 
+    #    print('Warning, no DAQ path is provided, daq_path.pyon is used')
+    #    file = '/home/labuser/bec2_control/control/local_path.pyon'
+    #    with open(file, 'r') as f: 
+    #        daq_dir = f.readline().strip()
+    #    print('Using ', daq_dir)
+    #else: 
+    #    daq_dir = args.daq_dir
 
     server_broadcast = Broadcaster()
     loop.run_until_complete(server_broadcast.start(
@@ -123,7 +123,8 @@ def main():
     experiment_db = ExperimentDB(
         repo_backend, worker_handlers, args.experiment_subdir)
     atexit.register(experiment_db.close)
-    print(daq_dir)
+    #print(daq_dir)
+    daq_dir = "/Users/abelberegi/daq/"
     cache_filename = os.path.join(daq_dir, "last_rid.pyon")
     print(cache_filename)
     results_dir = os.path.join(daq_dir, 'results')
