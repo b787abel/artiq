@@ -108,15 +108,25 @@ class SeriesScheduleDock(QtWidgets.QDockWidget):
                 series_dict['number_left'][ind]+=1 
                 if priority > series_dict['priority'][ind]: 
                     series_dict['priority'][ind] = priority
+        # for i in range(len(self.table_model.backing_store)):
+        #     try: 
+        #         self.table_model.__delitem__(0)
+        #     except:  
+        #         pass
+        # Fill up the table             
         for i in range(len(series_dict['all_series'])):  
             value = {"series": series_dict['all_series'][i],
                      "number_left": series_dict['number_left'][i],
                      "priority": series_dict['priority'][i]
                      }
-
-            self.table_model.__setitem__(i, value)
-            if value['number_left'] == 1: 
-                self.table_model.__delitem__(i)
+            self.table_model.__setitem__(value['series'], value)
+        #Go through table and remove unnecessary rows 
+        active_series = series_dict['all_series']
+        displayed_series = list(self.table_model.backing_store.keys())
+        for i in range(len(displayed_series)):
+            if displayed_series[i] not in active_series: 
+                self.table_model.__delitem__(displayed_series[i])
+            
         schedule.close_rpc()
 
     def set_model(self, model):

@@ -100,7 +100,6 @@ class DictSyncModel(QtCore.QAbstractTableModel):
     def headerData(self, col, orientation, role):
         if (orientation == QtCore.Qt.Horizontal and
                 role == QtCore.Qt.DisplayRole):
-            print(col, self.headers)
             if col<len(self.headers): 
                 return self.headers[col]
         return None
