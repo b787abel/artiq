@@ -50,7 +50,7 @@ def _mk_worker_method(name):
 class Run:
     def __init__(self, rid, pipeline_name,
                  wd, expid, priority, due_date, flush,
-                 pool, **kwargs):
+                 pool, series='asdfasdf',**kwargs):
         # called through pool
         self.rid = rid
         self.pipeline_name = pipeline_name
@@ -59,9 +59,12 @@ class Run:
         self.priority = priority
         self.due_date = due_date
         self.flush = flush
+        self.series = series 
 
         self.worker = Worker(pool.worker_handlers)
         self.termination_requested = False
+        self.pool = pool
+        self.kwargs = kwargs 
 
         self._status = RunStatus.pending
 
@@ -71,12 +74,34 @@ class Run:
             "priority": self.priority,
             "due_date": self.due_date,
             "flush": self.flush,
-            "status": self._status.name
+            "status": self._status.name,
+            "series": self.series
         }
         notification.update(kwargs)
         self._notifier = pool.notifier
         self._notifier[self.rid] = notification
         self._state_changed = pool.state_changed
+
+    def change_priority(self): 
+        status = self.status 
+        print(self.rid, ' status ', status)
+        if status == RunStatus.pending: 
+            self.priority = 3
+            notification = {
+                "pipeline": self.pipeline_name,
+                "expid": self.expid,
+                "priority": self.priority,
+                "due_date": self.due_date,
+                "flush": self.flush,
+                "status": self._status.name,
+                "series": self.series
+            }
+            notification.update(self.kwargs)
+            self._notifier = self.pool.notifier
+            self._notifier[self.rid] = notification
+            self._state_changed = self.pool.state_changed
+        else: 
+            print('cannot change priority, sequence is running or preparing')
 
     @property
     def status(self):
@@ -423,6 +448,21 @@ class Scheduler:
         await self._deleter.stop()
         if self._pipelines:
             logger.warning("some pipelines were not garbage-collected")
+            
+    def get_pipeline_pool(self): 
+        pipeline = self._pipelines
+        print(pipeline)
+        print(pipeline['main'])
+        print(dir(pipeline['main']))
+        rpool = pipeline['main'].pool
+        runs = rpool.runs 
+        print(runs)
+        key0 = list(runs.keys())[0]
+        print('first run', runs[key0])
+        key3 = list(runs.keys())[3]
+        run3 = runs[key3]
+        run3.change_priority()
+        
 
     def submit(self, pipeline_name, expid, priority=0, due_date=None, flush=False):
         """Submits a new run.
