@@ -100,7 +100,9 @@ class DictSyncModel(QtCore.QAbstractTableModel):
     def headerData(self, col, orientation, role):
         if (orientation == QtCore.Qt.Horizontal and
                 role == QtCore.Qt.DisplayRole):
-            return self.headers[col]
+            print(col, self.headers)
+            if col<len(self.headers): 
+                return self.headers[col]
         return None
 
     def _find_row(self, k, v):

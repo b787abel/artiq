@@ -21,7 +21,8 @@ from artiq.tools import get_user_config_dir
 from artiq.gui.models import ModelSubscriber
 from artiq.gui import state, log
 from artiq.dashboard import (experiments, shortcuts, explorer,
-                             moninj, datasets, schedule, applets_ccb)
+                             moninj, datasets, schedule, series_schedule,
+                             applets_ccb)
 
 
 def get_argparser():
@@ -143,7 +144,8 @@ def main():
     for notifier_name, modelf in (("explist", explorer.Model),
                                   ("explist_status", explorer.StatusUpdater),
                                   ("datasets", datasets.Model),
-                                  ("schedule", schedule.Model)):
+                                  ("schedule", schedule.Model),
+                                  ("series_schedule", series_schedule.Model)):
         subscriber = ModelSubscriber(notifier_name, modelf,
             report_disconnect)
         loop.run_until_complete(subscriber.connect(
@@ -203,13 +205,20 @@ def main():
     d_ttl_dds = moninj.MonInj(rpc_clients["schedule"])
     loop.run_until_complete(d_ttl_dds.start(args.server, args.port_notify))
     atexit_register_coroutine(d_ttl_dds.stop)
-
+    print('starting d_schedule')
     d_schedule = schedule.ScheduleDock(
         rpc_clients["schedule"], sub_clients["schedule"])
+    print('finished d_schedule')
     smgr.register(d_schedule)
+    print('starting s_schedule')
+    s_schedule = series_schedule.SeriesScheduleDock(
+        rpc_clients["schedule"], sub_clients["series_schedule"])
+    smgr.register(s_schedule)
+    print('finished s_schedule')
 
     logmgr = log.LogDockManager(main_window)
     smgr.register(logmgr)
+    print('finished log')
     broadcast_clients["log"].notify_cbs.append(logmgr.append_message)
     widget_log_handler.callback = logmgr.append_message
 
@@ -223,6 +232,8 @@ def main():
     for d1, d2 in zip(right_docks, right_docks[1:]):
         main_window.tabifyDockWidget(d1, d2)
     main_window.addDockWidget(QtCore.Qt.BottomDockWidgetArea, d_schedule)
+    main_window.addDockWidget(QtCore.Qt.BottomDockWidgetArea, s_schedule)
+    main_window.tabifyDockWidget(d_schedule,s_schedule)
 
     # load/initialize state
     if os.name == "nt":
@@ -241,7 +252,9 @@ def main():
     # create first log dock if not already in state
     d_log0 = logmgr.first_log_dock()
     if d_log0 is not None:
-        main_window.tabifyDockWidget(d_schedule, d_log0)
+        main_window.tabifyDockWidget(d_schedule,d_log0)
+    
+        
 
 
     if server_name is not None:
@@ -251,7 +264,9 @@ def main():
     logging.info("ARTIQ dashboard %s connected to master %s",
                  artiq_version, server_description)
     # run
+    print('before showing main window')
     main_window.show()
+    print('after showing main window')
     loop.run_until_complete(main_window.exit_request.wait())
 
 if __name__ == "__main__":
