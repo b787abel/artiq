@@ -82,11 +82,10 @@ class Run:
         self._notifier[self.rid] = notification
         self._state_changed = pool.state_changed
 
-    def change_priority(self): 
+    def change_priority(self, new_priority): 
         status = self.status 
-        print(self.rid, ' status ', status)
         if status == RunStatus.pending: 
-            self.priority = 3
+            self.priority = new_priority
             notification = {
                 "pipeline": self.pipeline_name,
                 "expid": self.expid,
@@ -101,7 +100,7 @@ class Run:
             self._notifier[self.rid] = notification
             self._state_changed = self.pool.state_changed
         else: 
-            print('cannot change priority, sequence is running or preparing')
+            print('cannot change priority of RID ',self.rid,' sequence is running or preparing')
 
     @property
     def status(self):
@@ -448,6 +447,17 @@ class Scheduler:
         await self._deleter.stop()
         if self._pipelines:
             logger.warning("some pipelines were not garbage-collected")
+            
+    def change_priority(self, rid, new_priority): 
+        pipeline = self._pipelines['main']
+        runs = pipeline.pool.runs
+        keys = list(runs.keys())
+        if rid in keys: 
+            run = runs[rid]
+            run.change_priority(new_priority)
+        else: 
+            print("RID ",rid," is not scheduled")
+            
             
     def get_pipeline_pool(self): 
         pipeline = self._pipelines
