@@ -144,7 +144,7 @@ def main():
     for notifier_name, modelf in (("explist", explorer.Model),
                                   ("explist_status", explorer.StatusUpdater),
                                   ("datasets", datasets.Model),
-                                  ("schedule", schedule.Model),
+                                  ("schedule", schedule.Model), 
                                   ("series_schedule", series_schedule.Model)):
         subscriber = ModelSubscriber(notifier_name, modelf,
             report_disconnect)

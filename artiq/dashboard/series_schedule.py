@@ -39,6 +39,12 @@ class Model(DictSyncModel):
             return v["number_left"]
         else:
             raise ValueError
+            
+    def set_row(self, key, value):
+        self.backing_store[key] = value
+        self.invalidate()
+            
+    
 
 
 class SeriesScheduleDock(QtWidgets.QDockWidget):
@@ -59,20 +65,6 @@ class SeriesScheduleDock(QtWidgets.QDockWidget):
         self.setWidget(self.table)
 
         self.table.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
-        request_termination_action = QtWidgets.QAction("Request termination", self.table)
-        request_termination_action.triggered.connect(partial(self.delete_clicked, True))
-        request_termination_action.setShortcut("DELETE")
-        request_termination_action.setShortcutContext(QtCore.Qt.WidgetShortcut)
-        self.table.addAction(request_termination_action)
-        delete_action = QtWidgets.QAction("Delete", self.table)
-        delete_action.triggered.connect(partial(self.delete_clicked, False))
-        delete_action.setShortcut("SHIFT+DELETE")
-        delete_action.setShortcutContext(QtCore.Qt.WidgetShortcut)
-        self.table.addAction(delete_action)
-        terminate_pipeline = QtWidgets.QAction(
-            "Gracefully terminate all in pipeline", self.table)
-        terminate_pipeline.triggered.connect(self.terminate_pipeline_clicked)
-        self.table.addAction(terminate_pipeline)
 
         self.table_model = Model(dict())
         self.table.setModel(self.table_model)
@@ -82,58 +74,29 @@ class SeriesScheduleDock(QtWidgets.QDockWidget):
         h = self.table.horizontalHeader()
         h.resizeSection(0, 7*cw)
         h.resizeSection(1, 12*cw)
-        #h.resizeSection(2, 16*cw)
-        #h.resizeSection(3, 6*cw)
-        #h.resizeSection(4, 16*cw)
-        #h.resizeSection(5, 30*cw)
-        #h.resizeSection(6, 20*cw)
-        #h.resizeSection(7, 20*cw)
+        
+        
+        # Initialize counter
+        self.counter = 0
+        
+        # Set up a QTimer to call the update method every second
+        self.timer = QtCore.QTimer(self)
+        self.timer.timeout.connect(self.on_timeout)
+        self.timer.start(1000)  # 1000 milliseconds = 1 second
+        
+    def on_timeout(self):
+        # This method will be called every second
+        self.counter += 1
+        key = self.counter
+        value = {"series": self.counter, "number_left": self.counter}
+        print('table',self.table_model)
+        #print('table',dir(self.table_model))
+        self.table_model.__setitem__(key, value)
+        logger.info(f"Added row {self.counter}")
 
     def set_model(self, model):
         self.table_model = model
         self.table.setModel(self.table_model)
-
-    async def delete(self, rid, graceful):
-        if graceful:
-            await self.schedule_ctl.request_termination(rid)
-        else:
-            await self.schedule_ctl.delete(rid)
-
-    def delete_clicked(self, graceful):
-        idx = self.table.selectedIndexes()
-        if idx:
-            row = idx[0].row()
-            rid = self.table_model.row_to_key[row]
-            if graceful:
-                logger.info("Requested termination of RID %d", rid)
-            else:
-                logger.info("Deleted RID %d", rid)
-            asyncio.ensure_future(self.delete(rid, graceful))
-
-    async def request_term_multiple(self, rids):
-        for rid in rids:
-            try:
-                await self.schedule_ctl.request_termination(rid)
-            except:
-                # May happen if the experiment has terminated by itself
-                # while we were terminating others.
-                logger.debug("failed to request termination of RID %d",
-                             rid, exc_info=True)
-
-    def terminate_pipeline_clicked(self):
-        idx = self.table.selectedIndexes()
-        if idx:
-            row = idx[0].row()
-            selected_rid = self.table_model.row_to_key[row]
-            pipeline = self.table_model.backing_store[selected_rid]["pipeline"]
-            logger.info("Requesting termination of all "
-                "experiments in pipeline '%s'", pipeline)
-
-            rids = set()
-            for rid, info in self.table_model.backing_store.items():
-                if info["pipeline"] == pipeline:
-                    rids.add(rid)
-            asyncio.ensure_future(self.request_term_multiple(rids))
 
 
     def save_state(self):

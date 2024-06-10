@@ -50,7 +50,7 @@ def _mk_worker_method(name):
 class Run:
     def __init__(self, rid, pipeline_name,
                  wd, expid, priority, due_date, flush,
-                 pool, series='asdfasdf',**kwargs):
+                 pool,**kwargs):
         # called through pool
         self.rid = rid
         self.pipeline_name = pipeline_name
@@ -59,7 +59,9 @@ class Run:
         self.priority = priority
         self.due_date = due_date
         self.flush = flush
-        self.series = series 
+        print('get series')
+        self.series = self.expid["arguments"]["series"] 
+        print('finished getting series')
 
         self.worker = Worker(pool.worker_handlers)
         self.termination_requested = False
@@ -80,6 +82,7 @@ class Run:
         notification.update(kwargs)
         self._notifier = pool.notifier
         self._notifier[self.rid] = notification
+
         self._state_changed = pool.state_changed
 
     def change_priority(self, new_priority): 

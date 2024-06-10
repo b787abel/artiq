@@ -16,7 +16,7 @@ class Model(DictSyncModel):
     def __init__(self, init):
         DictSyncModel.__init__(self,
             ["RID", "Pipeline", "Status", "Prio", "Due date",
-             "Revision", "File", "Class name"],
+             "Revision", "File", "Class name", "Series"],
             init)
 
     def sort_key(self, k, v):
@@ -53,7 +53,12 @@ class Model(DictSyncModel):
             if v["expid"]["class_name"] is None:
                 return ""
             else:
-                return v["expid"]["class_name"]
+                return v["expid"]["class_name"]   
+        elif column == 8:
+            if v["expid"]["arguments"]["series"] is None:
+                return ""
+            else:
+                return v["expid"]["arguments"]["series"]
         else:
             raise ValueError
 
