@@ -15,6 +15,7 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 
 from artiq.gui.models import DictSyncModel
 from artiq.tools import elide
+from sipyco.pc_rpc import Client
 
 
 logger = logging.getLogger(__name__)
@@ -23,29 +24,26 @@ logger = logging.getLogger(__name__)
 class Model(DictSyncModel):
     def __init__(self, init):
         DictSyncModel.__init__(self,
-            ["series", "number_left"],
+            ["series", "number_left", 'priority'],
             init)
 
     def sort_key(self, k, v):
         # order by priority, and then by due date and RID
-        return (-v["series"], v["number_left"] or 0, k)
+        return (-v["priority"] or 0, k)
 
     def convert(self, k, v, column):
         if column == 0:
-            return k
-        elif column == 1:
             return v["series"]
-        elif column == 2:
+        elif column == 1:
             return v["number_left"]
+        elif column == 2: 
+            return v["priority"]
         else:
             raise ValueError
             
-    def set_row(self, key, value):
-        self.backing_store[key] = value
-        self.invalidate()
-            
+    def clear_all(self):
+        self.backing_store.clear()
     
-
 
 class SeriesScheduleDock(QtWidgets.QDockWidget):
     def __init__(self, schedule_ctl, schedule_sub):
@@ -86,13 +84,40 @@ class SeriesScheduleDock(QtWidgets.QDockWidget):
         
     def on_timeout(self):
         # This method will be called every second
-        self.counter += 1
-        key = self.counter
         value = {"series": self.counter, "number_left": self.counter}
-        print('table',self.table_model)
-        #print('table',dir(self.table_model))
-        self.table_model.__setitem__(key, value)
-        logger.info(f"Added row {self.counter}")
+        
+        schedule = Client("::1", 3251, "master_schedule")
+        
+        #Get status and series IDs 
+        status = schedule.get_status()
+        series_dict = {'all_series': [], 
+               'number_left': [],
+               'priority': []}
+
+        keys = status.keys()
+        for key in keys: 
+            exp = status[key]
+            series = exp['expid']['arguments']['series']
+            priority = exp['priority']
+            if series not in series_dict['all_series']: 
+                series_dict['all_series'].append(series)
+                series_dict['number_left'].append(1)
+                series_dict['priority'].append(priority)
+            else: 
+                ind = series_dict['all_series'].index(series)
+                series_dict['number_left'][ind]+=1 
+                if priority > series_dict['priority'][ind]: 
+                    series_dict['priority'][ind] = priority
+        for i in range(len(series_dict['all_series'])):  
+            value = {"series": series_dict['all_series'][i],
+                     "number_left": series_dict['number_left'][i],
+                     "priority": series_dict['priority'][i]
+                     }
+
+            self.table_model.__setitem__(i, value)
+            if value['number_left'] == 1: 
+                self.table_model.__delitem__(i)
+        schedule.close_rpc()
 
     def set_model(self, model):
         self.table_model = model
