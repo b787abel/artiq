@@ -461,6 +461,14 @@ class Scheduler:
         else: 
             print("RID ",rid," is not scheduled")
             
+    def change_series_priority(self, series, new_priority):
+        pipeline = self._pipelines['main']
+        runs = pipeline.pool.runs
+        keys = list(runs.keys())
+        for key in keys: 
+            run = runs[key]
+            if run.series == series: 
+                run.change_priority(new_priority)
             
     def get_pipeline_pool(self): 
         pipeline = self._pipelines

@@ -44,6 +44,33 @@ class Model(DictSyncModel):
     def clear_all(self):
         self.backing_store.clear()
     
+    
+    def flags(self, index):
+        flags = super().flags(index)
+        if index.column() == 2:  # Make the third column editable
+            flags |= QtCore.Qt.ItemIsEditable
+        return flags
+    
+    def setData(self, index, value, role=QtCore.Qt.EditRole):
+        if role == QtCore.Qt.EditRole:
+            keys = list(self.backing_store.keys())
+            key = keys[index.row()]
+            old_row = self.backing_store[key]
+            column = index.column()
+            print('setData ','key', key, 'column', column)
+            print('before update', self.backing_store)
+            if column == 2:
+                old_row = self.backing_store[key]
+                old_row["priority"] = int(value)
+                series = old_row["series"]
+                self.__delitem__(key)
+                self.__setitem__(key, old_row)
+            print('after update', self.backing_store)
+            schedule = Client("::1", 3251, "master_schedule")
+            schedule.change_series_priority(series, int(value))
+            schedule.close_rpc()
+            return True
+        return False
 
 class SeriesScheduleDock(QtWidgets.QDockWidget):
     def __init__(self, schedule_ctl, schedule_sub):
@@ -82,6 +109,27 @@ class SeriesScheduleDock(QtWidgets.QDockWidget):
         self.timer.timeout.connect(self.on_timeout)
         self.timer.start(1000)  # 1000 milliseconds = 1 second
         
+        # Connect signals for editing start and stop
+        self.table.clicked.connect(self.stop_timer_on_edit)
+        self.table.setItemDelegate(ItemDelegate(self))
+        
+        #self.table.dataChanged.connect(self.start_timer)
+        
+        
+    def stop_timer_on_edit(self):
+        print('click detected!!!')
+        # Stop the timer when editing starts
+        print('state', self.table.state())
+        #if self.table.state() == QtWidgets.QAbstractItemView.EditingState:
+        self.timer.stop()
+        print('timer stopped')
+
+    def start_timer(self):
+        print('timer started')
+        # Restart the timer when editing is finished
+        #if self.table.state() != QtWidgets.QAbstractItemView.EditingState:
+        self.timer.start(1000)
+        
     def on_timeout(self):
         # This method will be called every second
         value = {"series": self.counter, "number_left": self.counter}
@@ -108,18 +156,18 @@ class SeriesScheduleDock(QtWidgets.QDockWidget):
                 series_dict['number_left'][ind]+=1 
                 if priority > series_dict['priority'][ind]: 
                     series_dict['priority'][ind] = priority
-        # for i in range(len(self.table_model.backing_store)):
-        #     try: 
-        #         self.table_model.__delitem__(0)
-        #     except:  
-        #         pass
+                    
         # Fill up the table             
+        print('callback ', self.table_model.backing_store)
         for i in range(len(series_dict['all_series'])):  
             value = {"series": series_dict['all_series'][i],
                      "number_left": series_dict['number_left'][i],
                      "priority": series_dict['priority'][i]
                      }
-            self.table_model.__setitem__(value['series'], value)
+            try: 
+                self.table_model.__setitem__(value['series'], value)
+            except: 
+                print('callback cannot set')
         #Go through table and remove unnecessary rows 
         active_series = series_dict['all_series']
         displayed_series = list(self.table_model.backing_store.keys())
@@ -139,3 +187,31 @@ class SeriesScheduleDock(QtWidgets.QDockWidget):
 
     def restore_state(self, state):
         self.table.horizontalHeader().restoreState(QtCore.QByteArray(state))
+
+class ItemDelegate(QtWidgets.QItemDelegate):
+    def __init__(self, parent=None):
+        super(ItemDelegate, self).__init__(parent)
+        self.dock_widget = parent
+
+    def createEditor(self, parent, option, index):
+        editor = super().createEditor(parent, option, index)
+        if index.column() == 2:
+            editor.installEventFilter(self)
+        return editor
+
+    def eventFilter(self, editor, event):
+        if event.type() == QtCore.QEvent.KeyPress:
+            if event.key() == QtCore.Qt.Key_Return or event.key() == QtCore.Qt.Key_Enter:
+                self.commitData.emit(editor)
+                self.closeEditor.emit(editor, QtWidgets.QAbstractItemDelegate.NoHint)
+                self.dock_widget.start_timer()  # Restart the timer
+                return True
+        return super(ItemDelegate, self).eventFilter(editor, event)
+
+    def setEditorData(self, editor, index):
+        value = index.model().data(index, QtCore.Qt.EditRole)
+        editor.setText(str(value))
+
+    def setModelData(self, editor, model, index):
+        value = int(editor.text())
+        model.setData(index, value, QtCore.Qt.EditRole)

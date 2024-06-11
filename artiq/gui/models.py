@@ -118,9 +118,11 @@ class DictSyncModel(QtCore.QAbstractTableModel):
         return lo
 
     def __setitem__(self, k, v):
+        
         if k in self.backing_store:
             old_row = self.row_to_key.index(k)
             new_row = self._find_row(k, v)
+            print("oldnewrows",old_row, new_row)
             if old_row == new_row:
                 self.dataChanged.emit(self.index(old_row, 0),
                                       self.index(old_row, len(self.headers)-1))
