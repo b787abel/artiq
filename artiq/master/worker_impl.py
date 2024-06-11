@@ -289,18 +289,23 @@ def main():
     exp_inst = None
     repository_path = None
 
-    def write_results():
+    def write_results(series):
         cwd = os.getcwd()
 
-        file = r'/home/labuser/bec2_control/control/daq_path.pyon'
-        with open(file, 'r') as f: 
-            daq_dir = f.readline().strip()
-        dirname = os.path.join(daq_dir, *cwd.split('/')[-3:])
-            
-        local_file =  r'/home/labuser/bec2_control/control/local_path.pyon'
-        with open(local_file, 'r') as f: 
-            local_dir = f.readline().strip()
-        local_dirname = os.path.join(local_dir, *cwd.split('/')[-3:])
+        #file = r'/home/labuser/bec2_control/control/daq_path.pyon'
+        
+        #with open(file, 'r') as f: 
+        #    daq_dir = f.readline().strip()
+        
+        daq_dir = "/Users/abelberegi/Documents/artiq_test/daq"
+        dirname = os.path.join(daq_dir, *cwd.split('/')[-3:-1], series)
+        print('saving to directory', dirname)
+        print('cwd splitting', *cwd.split('/'))
+        #local_file =  r'/home/labuser/bec2_control/control/local_path.pyon'
+        #with open(local_file, 'r') as f: 
+        #    local_dir = f.readline().strip()
+        local_dir = "/Users/abelberegi/Documents/artiq_test/local"
+        local_dirname = os.path.join(local_dir, *cwd.split('/')[-3:-1], series)
         
         filename = "{:09}-{}.h5".format(rid, exp.__name__)
         if not os.path.exists(dirname): 
@@ -345,6 +350,7 @@ def main():
                 start_time = time.time()
                 rid = obj["rid"]
                 expid = obj["expid"]
+                series = expid['arguments']['series']
                 if "file" in expid:
                     if obj["wd"] is not None:
                         # Using repository
@@ -379,7 +385,7 @@ def main():
                 except:
                     # Only write results in run() on failure; on success wait
                     # for end of analyze stage.
-                    write_results()
+                    write_results(series)
                     raise
                 put_completed()
             elif action == "analyze":
@@ -390,7 +396,7 @@ def main():
                     # browser's analyze shouldn't write results,
                     # since it doesn't run the experiment and cannot have rid
                     if rid is not None:
-                        write_results()
+                        write_results(series)
             elif action == "examine":
                 examine(ExamineDeviceMgr, ExamineDatasetMgr, obj["file"])
                 put_completed()
