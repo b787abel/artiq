@@ -59,16 +59,18 @@ class Model(DictSyncModel):
             column = index.column()
             print('setData ','key', key, 'column', column)
             print('before update', self.backing_store)
-            if column == 2:
-                old_row = self.backing_store[key]
-                old_row["priority"] = int(value)
-                series = old_row["series"]
-                self.__delitem__(key)
-                self.__setitem__(key, old_row)
-            print('after update', self.backing_store)
+            #if column == 2:
+            #old_row = self.backing_store[key]
+            #    old_row["priority"] = int(value)
+            series = old_row["series"]
+            #    self.__delitem__(key)
+            #    self.__setitem__(key, old_row)
+            #print('after update', self.backing_store)
             schedule = Client("::1", 3251, "master_schedule")
             schedule.change_series_priority(series, int(value))
             schedule.close_rpc()
+            print('after update', self.backing_store)
+            time.sleep(0.5)
             return True
         return False
 
@@ -154,11 +156,11 @@ class SeriesScheduleDock(QtWidgets.QDockWidget):
             else: 
                 ind = series_dict['all_series'].index(series)
                 series_dict['number_left'][ind]+=1 
-                if priority > series_dict['priority'][ind]: 
-                    series_dict['priority'][ind] = priority
+                #if priority > series_dict['priority'][ind]: 
+                series_dict['priority'][ind] = priority
                     
         # Fill up the table             
-        print('callback ', self.table_model.backing_store)
+        #print('callback ', self.table_model.backing_store)
         for i in range(len(series_dict['all_series'])):  
             value = {"series": series_dict['all_series'][i],
                      "number_left": series_dict['number_left'][i],

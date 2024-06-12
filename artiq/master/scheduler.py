@@ -87,23 +87,23 @@ class Run:
 
     def change_priority(self, new_priority): 
         status = self.status 
-        if status == RunStatus.pending: 
-            self.priority = new_priority
-            notification = {
-                "pipeline": self.pipeline_name,
-                "expid": self.expid,
-                "priority": self.priority,
-                "due_date": self.due_date,
-                "flush": self.flush,
-                "status": self._status.name,
-                "series": self.series
-            }
-            notification.update(self.kwargs)
-            self._notifier = self.pool.notifier
-            self._notifier[self.rid] = notification
-            self._state_changed = self.pool.state_changed
-        else: 
-            print('cannot change priority of RID ',self.rid,' sequence is running or preparing')
+        #if status == RunStatus.pending: 
+        self.priority = new_priority
+        notification = {
+            "pipeline": self.pipeline_name,
+            "expid": self.expid,
+            "priority": self.priority,
+            "due_date": self.due_date,
+            "flush": self.flush,
+            "status": self._status.name,
+            "series": self.series
+        }
+        notification.update(self.kwargs)
+        self._notifier = self.pool.notifier
+        self._notifier[self.rid] = notification
+        self._state_changed = self.pool.state_changed
+        #else: 
+        #    print('cannot change priority of RID ',self.rid,' sequence is running or preparing')
 
     @property
     def status(self):
